@@ -10,14 +10,14 @@ class Node {
             next = nullptr;
             name = "";
         }
-        Node(T data, std::string NewNodeName) {
+        Node(const T data, const std::string NewNodeName) {
             name = NewNodeName;
             info = data;
             next = nullptr;
         }
         void setNext(Node * newNode);
-        void setInfo(T data);
-        void setName(std::string n);
+        void setInfo(const T data);
+        void setName(const std::string n);
         std::string getName();
         T getInfo();
         Node<T> * getNext();
@@ -32,12 +32,12 @@ void Node<T>::setNext(Node * newNode) {
 }
 
 template <typename T>
-void Node<T>::setInfo(T data) {
+void Node<T>::setInfo(const T data) {
     info = data;
 }
 
 template <typename T>
-void Node<T>::setName(std::string n) {
+void Node<T>::setName(const std::string n) {
     name = n;
 }
 
@@ -69,18 +69,18 @@ class SingleLinkedList {
             first = nullptr;
             last = nullptr;
         }
-         Node<T> * findNode(std::string name);
-        void addNode(T info, std::string name);
+         Node<T> * findNode(const std::string name);
+        void addNode(const T info, const std::string name);
         void print();
-        void deleteNode(std::string name);
-        void addAfterNode(std::string name, T data, std::string newNodeName);
+        void deleteNode(const std::string name);
+        void addAfterNode(const std::string name,const T data, const std::string newNodeName);
         ~SingleLinkedList() {
             delete first;
         }
 };
 
 template <typename T>
-void SingleLinkedList<T>::addNode(T info, std::string name) {
+void SingleLinkedList<T>::addNode(const T info, const std::string name) {
     Node<T> * newNode = new Node<T>(info, name);
     if (last != nullptr) {
         last->setNext(newNode);
@@ -92,7 +92,7 @@ void SingleLinkedList<T>::addNode(T info, std::string name) {
 }
 
 template <typename T>
-Node<T> * SingleLinkedList<T>::findNode(std::string name) {
+Node<T> * SingleLinkedList<T>::findNode(const std::string name) {
     if(first == nullptr) {
         std::cerr << "List is empty";
         return nullptr;
@@ -112,7 +112,7 @@ Node<T> * SingleLinkedList<T>::findNode(std::string name) {
 }
 
 template <typename T>
-void SingleLinkedList<T>::addAfterNode(std::string name, T data, std::string newNodeName) {
+void SingleLinkedList<T>::addAfterNode(const std::string name, const T data, std::string newNodeName) {
     Node<T> * newNode = new Node<T>(data, newNodeName);
     Node<T> * temp = findNode(name);
     newNode->setNext(temp->getNext());
@@ -120,7 +120,7 @@ void SingleLinkedList<T>::addAfterNode(std::string name, T data, std::string new
 }
 
 template <typename T>
-void SingleLinkedList<T>::deleteNode(std::string name) {
+void SingleLinkedList<T>::deleteNode(const std::string name) {
     if(first == nullptr) {
         std::cerr << "List is empty";
     }
