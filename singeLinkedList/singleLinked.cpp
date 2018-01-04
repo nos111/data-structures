@@ -10,6 +10,11 @@ class Node {
             next = nullptr;
             name = "";
         }
+        Node(T data, std::string NewNodeName) {
+            name = NewNodeName;
+            info = data;
+            next = nullptr;
+        }
         void setNext(Node * newNode);
         void setInfo(T data);
         void setName(std::string n);
@@ -68,6 +73,7 @@ class SingleLinkedList {
         void addNode(T info, std::string name);
         void print();
         void deleteNode(std::string name);
+        void addAfterNode(std::string name, T data, std::string newNodeName);
         ~SingleLinkedList() {
             delete first;
         }
@@ -75,9 +81,7 @@ class SingleLinkedList {
 
 template <typename T>
 void SingleLinkedList<T>::addNode(T info, std::string name) {
-    Node<T> * newNode = new Node<T>();
-    newNode->setInfo(info);
-    newNode->setName(name);
+    Node<T> * newNode = new Node<T>(info, name);
     if (last != nullptr) {
         last->setNext(newNode);
         last = last->getNext();
@@ -107,6 +111,13 @@ Node<T> * SingleLinkedList<T>::findNode(std::string name) {
     return nullptr;
 }
 
+template <typename T>
+void SingleLinkedList<T>::addAfterNode(std::string name, T data, std::string newNodeName) {
+    Node<T> * newNode = new Node<T>(data, newNodeName);
+    Node<T> * temp = findNode(name);
+    newNode->setNext(temp->getNext());
+    temp->setNext(newNode);
+}
 
 template <typename T>
 void SingleLinkedList<T>::deleteNode(std::string name) {
@@ -153,10 +164,9 @@ int main() {
     for (int i = 0; i < 10; i++) {
         SLS.addNode(i, std::to_string(i));
     }
-    SLS.addNode(100, "nour");
+    SLS.addAfterNode("4", 100, "nour");
     SLS.deleteNode("5");
     SLS.deleteNode("0");
     SLS.print();
-
     return 0;
 }
