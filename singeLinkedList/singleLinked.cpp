@@ -1,5 +1,4 @@
 #include <iostream>
-#include <sstream>
 
 template <typename T>
 class Node {
@@ -59,28 +58,84 @@ template <typename T>
 class SingleLinkedList {
     Node<T> * last;
     Node<T> * first;
+   
     public:
         SingleLinkedList() {
             first = nullptr;
             last = nullptr;
         }
-        void addNode(T info);
+         Node<T> * findNode(std::string name);
+        void addNode(T info, std::string name);
         void print();
+        void deleteNode(std::string name);
         ~SingleLinkedList() {
             delete first;
         }
 };
 
 template <typename T>
-void SingleLinkedList<T>::addNode(T info) {
+void SingleLinkedList<T>::addNode(T info, std::string name) {
     Node<T> * newNode = new Node<T>();
     newNode->setInfo(info);
+    newNode->setName(name);
     if (last != nullptr) {
         last->setNext(newNode);
         last = last->getNext();
     } else {
         first = newNode;
         last = newNode;
+    }
+}
+
+template <typename T>
+Node<T> * SingleLinkedList<T>::findNode(std::string name) {
+    if(first == nullptr) {
+        std::cerr << "List is empty";
+        return nullptr;
+    }
+    if(first->getName() == name) {
+        return first;
+    }
+    Node<T> * temp = first;
+    while(temp->getNext() != nullptr) {
+        if(temp->getNext()->getName() == name) {
+            return temp->getNext();
+        } 
+        temp = temp->getNext();
+    }
+    std::cerr << "Node not found";
+    return nullptr;
+}
+
+
+template <typename T>
+void SingleLinkedList<T>::deleteNode(std::string name) {
+    if(first == nullptr) {
+        std::cerr << "List is empty";
+    }
+    Node<T> * temp = first;
+    if(first->getName() == name) {
+        first = first->getNext();
+        temp->setNext(nullptr);
+        delete temp;
+        return;
+    }
+    while(temp->getNext() != nullptr) {
+        if(temp->getNext()->getName() == name) {
+            //check if the element is the last element in the list
+            if(temp->getNext()->getNext()!= nullptr) {
+                Node<T> * temp2 = temp->getNext();
+                temp->setNext(temp->getNext()->getNext());
+                temp2->setNext(nullptr);
+                delete temp2;
+            } else {
+                Node<T> * temp2 = temp->getNext();
+                delete temp2;
+                temp->setNext(nullptr);
+            }
+        } 
+        if(temp->getNext() != nullptr) temp = temp->getNext();
+        
     }
 }
 
@@ -95,14 +150,13 @@ void SingleLinkedList<T>::print() {
 
 int main() {
     SingleLinkedList<int> SLS;
-    
     for (int i = 0; i < 10; i++) {
-        SLS.addNode(i);
+        SLS.addNode(i, std::to_string(i));
     }
-   // Node<int> * b  = new Node<int>;
-    //b->info = 6;
-    //SLS.append(b);
-    SLS.addNode(100);
+    SLS.addNode(100, "nour");
+    SLS.deleteNode("5");
+    SLS.deleteNode("0");
     SLS.print();
+
     return 0;
 }
