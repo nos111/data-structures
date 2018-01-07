@@ -16,12 +16,15 @@ class SingleLinkedList {
     };
     Node * last;
     Node * first;
+    Node * iterator;
     public:
         SingleLinkedList() {
             first = nullptr;
             last = nullptr;
         }
         T & findNode(const T info);
+        T * iteratorBegin();
+        T * iteratorNext();
         void addNode(const T info);
         void deleteNode(const T info);
         void addAfterNode(const T info,const T data);
@@ -47,6 +50,20 @@ void SingleLinkedList<T>::addNode(const T info) {
         last = newNode;
     }
 }
+
+template <typename T>
+T * SingleLinkedList<T>::iteratorBegin() {
+    iterator = first;
+    return &first->info;
+}
+
+template <typename T>
+T * SingleLinkedList<T>::iteratorNext() {
+    iterator = iterator->next;
+    return &iterator->info;
+}
+
+
 
 template <typename T>
 T & SingleLinkedList<T>::findNode(const T info) {
@@ -147,5 +164,8 @@ int main() {
     SLS.deleteNode(5);
     SLS.deleteNode(0);
     SLS.apply(&print);
+    int * i = SLS.iteratorBegin();
+    i = SLS.iteratorNext();
+    std::cout << *i << "\n";
     return 0;
 }
