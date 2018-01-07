@@ -1,10 +1,10 @@
 #include <iostream>
 
 template <typename T>
-class Node {
+class Stack {
+    struct Node {
         T info;
         Node * next;
-    public:
         Node() {
             next = nullptr;
         }
@@ -12,37 +12,10 @@ class Node {
             info = data;
             next = nullptr;
         }
-        void setNext(Node * newNode);
-        void setInfo(T data);
-        T getInfo();
-        Node<T> * getNext();
         ~Node() {};
 };
 
-template <typename T>
-void Node<T>::setNext(Node * newNode) {
-    next = newNode;
-}
-
-template <typename T>
-void Node<T>::setInfo(T data) {
-    info = data;
-}
-
-template <typename T>
-T Node<T>::getInfo() {
-    return info;
-}
-
-template <typename T>
-Node<T> * Node<T>::getNext() {
-    return next;
-}
-
-
-template <typename T>
-class Stack {
-    Node<T> * top;
+    Node * top;
    
     public:
         Stack() {
@@ -50,12 +23,12 @@ class Stack {
         }
         void push(T info);
         void print();
-        Node<T> * pop();
-        Node<T> * peek();
+        T pop();
+        T peek();
         ~Stack() {
             while(top != nullptr) {
-                Node<T> * temp = top;
-                top = top->getNext();
+                Node * temp = top;
+                top = top->next;
                 delete temp;
             }
             delete top;
@@ -64,38 +37,39 @@ class Stack {
 
 template <typename T>
 void Stack<T>::push(T info) {
-    Node<T> * newNode = new Node<T>(info);
+    Node * newNode = new Node(info);
     if (top != nullptr) {
-        newNode->setNext(top);
+        newNode->next = top;
     }
     top = newNode;
 }
 
 template <typename T>
-Node<T> * Stack<T>::pop() {
+T Stack<T>::pop() {
     if(top == nullptr) {
         std::cerr << "stack is empty";
     }
-    Node<T> * temp = top;
-    top = top->getNext();
-    //temp->setNext(nullptr);
-    return temp;
+    Node * temp = top;
+    top = top->next;
+    T tempData = temp->info;
+    delete temp;
+    return tempData;
 }
 
 template <typename T>
-Node<T> * Stack<T>::peek() {
+T Stack<T>::peek() {
     if(top == nullptr) {
         std::cerr << "stack is empty";
     }
-    return top;
+    return top->info;
 }
 
 template <typename T>
 void Stack<T>::print() {
-    Node<T> * temp = top;
+    Node * temp = top;
     while(temp != nullptr) {
-        std::cout << temp->getInfo() << '\n';
-        temp = temp->getNext();
+        std::cout << temp->info << '\n';
+        temp = temp->next;
     }
 }
 
@@ -105,6 +79,8 @@ int main() {
     for (int i = 0; i < 10; i++) {
         stack.push(i);
     }
+    int s = stack.pop();
+    std::cout << s << "hi"<<"\n";
     stack.print();
     return 0;
 }
