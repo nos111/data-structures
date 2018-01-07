@@ -16,9 +16,7 @@ class Node {
         void setInfo(T data);
         T getInfo();
         Node<T> * getNext();
-        ~Node() {
-            delete next;
-        };
+        ~Node() {};
 };
 
 template <typename T>
@@ -55,6 +53,11 @@ class Stack {
         Node<T> * pop();
         Node<T> * peek();
         ~Stack() {
+            while(top != nullptr) {
+                Node<T> * temp = top;
+                top = top->getNext();
+                delete temp;
+            }
             delete top;
         }
 };
@@ -75,6 +78,7 @@ Node<T> * Stack<T>::pop() {
     }
     Node<T> * temp = top;
     top = top->getNext();
+    //temp->setNext(nullptr);
     return temp;
 }
 
@@ -98,12 +102,9 @@ void Stack<T>::print() {
 
 int main() {
     Stack<int> stack;
-    stack.push(100);
     for (int i = 0; i < 10; i++) {
         stack.push(i);
     }
-    std::cout << stack.pop()->getInfo() << "\n";
-    std::cout << stack.pop()->getInfo() << "\n";
     stack.print();
     return 0;
 }
