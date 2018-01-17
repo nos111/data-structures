@@ -10,7 +10,8 @@ class BinaryTree {
         Node * right;
         Node * father;
         T key;
-        ~Node(){};
+        ~Node(){
+        };
     };
     Node * root;
     public:
@@ -21,9 +22,30 @@ class BinaryTree {
             Node * temp = root;
             while(temp != nullptr) {
                 if(temp->key == data) {
-                    temp->right->father = temp->father;
-                    delete temp;
-                    return;
+                    //Node with no childs
+                    if(temp->left == nullptr && temp->right == nullptr) {
+                        if(temp->father->left != nullptr) {
+                            if(temp->father->left->key == temp->key) temp->father->left = nullptr;
+                            else  { temp->father->right = nullptr; }
+                        }
+                        return;
+                    }
+                    //Node with one child
+                    if(temp->left == nullptr && temp->right != nullptr) {
+                        temp->right->father = temp->father;
+                        temp->father->right = temp->right;
+                        return;
+                    }
+                    if(temp->left != nullptr && temp->right == nullptr) {
+                        temp->left->father = temp->father;
+                        temp->father->left = temp->left;
+                        return;
+                    }
+
+                    //Node with two children
+                    while(temp != nullptr) {
+                        
+                    }
                 }
                 if (data > temp->key) {
                     temp = temp->right;
@@ -75,7 +97,7 @@ class BinaryTree {
         }
 
         void apply(void (*foo) (T)) {
-            foo(root->right->left->key);
+            foo(root->right->right->key);
         }
 
 };
@@ -91,12 +113,13 @@ int main() {
     bt->addElement(200);
     bt->addElement(180);
     bt->addElement(300);
+    bt->addElement(400);
     bt->addElement(50);
     bt->addElement(25);
     //int & a = bt->findElement(0);
     //a = 60;
     //std::cout << a << '\n';
-    bt->deleteElement(200);
+    bt->deleteElement(400);
     bt->apply(&print);
     return 0;
 }
