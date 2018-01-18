@@ -1,35 +1,37 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <cassert>
 
 template <typename T>
 class Heap {
   std::vector<T> list;
-  int heapSize() {
-    return list.size();
-  };
+  int heapSize;
   int left (int index) {
     if(index == 0) return 1;
-    return 2 * index;
+    return 2 * index + 1;
   }
   int right (int index) {
     if(index == 0) return 2;
-    return (2 * index) + 1;
+    return (2 * index) + 2;
   }
   int parent(int index) {
-    return floor((index / 2)) - 1;
+    if(index == 2 || index == 1 || index == 0) return 0;
+    return floor(((index - 1) / 2));
   }
   void maxHeapify(int i) {
       int l = left(i);
       int r = right(i);
-      
+      //std::cout << "index is " << i << '\n';
+      //std::cout << "left is " << l << "parent is " << parent(l) << '\n';
+      //std::cout << "right is " << r << "parent is " << parent(r) << '\n';
       int largest;
-      if(l < heapSize() && list[l] > list[i]) {
+      if(l < heapSize && list[l] > list[i]) {
         largest = l;
       } else {
         largest = i;
       }
-      if(r < heapSize() && list[r] > list[largest]) {
+      if(r < heapSize && list[r] > list[largest]) {
         largest = r;
       }
       if(largest != i) {
@@ -44,12 +46,12 @@ class Heap {
       int r = right(i);
       
       int smallest;
-      if(l < heapSize() && list[l] < list[i]) {
+      if(l < heapSize && list[l] < list[i]) {
         smallest = l;
       } else {
         smallest = i;
       }
-      if(r < heapSize() && list[r] < list[smallest]) {
+      if(r < heapSize && list[r] < list[smallest]) {
         smallest = r;
       }
       if(smallest != i) {
@@ -60,29 +62,83 @@ class Heap {
         minHeapify(smallest);
       }
     }
+    void swapKeysUp(int index) {
+      int p = parent(index);
+      while(list[p] <= list[index] && index > 0) {
+        T temp = list[p];
+        list[p] = list[index];
+        list[index] = temp;
+        index = p;
+        p = parent(index);
+      }
+    }
+    void swapKeysDown(int index) {
+      int p = parent(index);
+      while(list[p] >= list[index] && index > 0) {
+        T temp = list[p];
+        list[p] = list[index];
+        list[index] = temp;
+        index = p;
+        p = parent(index);
+      }
+    }
+
   public:
     void buildMaxHeap(std::vector<T> l) {
       list = l;
-      for(int i = floor(l.size() / 2) - 1; i >= 0; i--) {
+      heapSize = list.size();
+      for(int i = floor(list.size() / 2) - 1; i >= 0; i--) {
         maxHeapify(i);
       }
     }
+
+    void MaxHeapInsert(T value) {
+      list.push_back(value);
+      heapSize++;
+      swapKeysUp(heapSize - 1);
+    }
+
+    T heapExtractMax() {
+      if(heapSize > 0) {
+        T temp = list[0];
+        list[0] = list[heapSize - 1];
+        heapSize = heapSize - 1;
+        maxHeapify(0);
+        return temp;
+      }
+      throw std::range_error("out of range");
+    }
+
     void buildMinHeap(std::vector<T> l) {
       list = l;
-      for(int i = floor(l.size() / 2) - 1; i >= 0; i--) {
-        std::cout << i << '\n';
+      heapSize = list.size();
+      for(int i = floor(list.size() / 2) - 1; i >= 0; i--) {
         minHeapify(i);
       }
     }
+    void MinHeapInsert(T value) {
+      list.push_back(value);
+      heapSize++;
+      swapKeysDown(heapSize - 1);
+    }
+    T heapExtractMin() {
+      if(heapSize > 0) {
+        T temp = list[0];
+        list[0] = list[heapSize - 1];
+        heapSize = heapSize - 1;
+        minHeapify(0);
+        return temp;
+      }
+      throw std::range_error("out of range");
+    }
     void printHeap() {
-      for(int i = 0; i < heapSize(); i++) {
+      for(int i = 0; i < heapSize; i++) {
         std::cout << list[i] << " ";
       }
     }
     ~Heap(){};
     
 };
-
 
 int main () {
   std::vector<int> list;
@@ -95,13 +151,34 @@ int main () {
   list.push_back(3);
   list.push_back(2);
   list.push_back(8);
-  list.push_back(1);
-  std::cout << list.size();
+  //std::cout << list.size();
   Heap<int> h;
   h.buildMaxHeap(list);
+  h.MaxHeapInsert(20);
   h.printHeap();
-  std::cout << '\n';
+  int extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  extractedMax = h.heapExtractMax();
+  std::cout  << '\n';
+  std::cout << "extracted max is " << extractedMax << '\n';
+
   h.buildMinHeap(list);
+  h.MinHeapInsert(1);
   h.printHeap();
+  int extractedMin;
+  extractedMin = h.heapExtractMin();
+  extractedMin = h.heapExtractMin();
+  extractedMin = h.heapExtractMin();
+  extractedMin = h.heapExtractMin();
+  std::cout  << '\n';
+  std::cout << "extracted min is " << extractedMin << '\n';
+
   return 0;
 }
