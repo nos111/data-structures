@@ -155,8 +155,8 @@ class BinaryTree {
         }
         void inorderTreeWalk(Node * x) {
             if(x != nullptr) {
-                std::cout << x->key << "\n";
                 inorderTreeWalk(x->left);
+                std::cout << x->key << "\n";
                 inorderTreeWalk(x->right);
             }
         }
@@ -166,8 +166,6 @@ class BinaryTree {
         void printTree() {
             inorderTreeWalk(root);
         }
-
-
 };
 
 void print(int i) {
