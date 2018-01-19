@@ -24,11 +24,13 @@ class BinaryTree {
             }
             else if(origin->father->left != nullptr) {
                 if(origin->father->left->key == origin->key) origin->father->left = target;
-            }
-            else {
+                else {
                 origin->father->right = target;
+                }
             }
-            target->father = origin->father;
+            if(target != nullptr) {
+                target->father = origin->father;
+            } 
         }
         void deleteElement(T data) {
             Node * temp = root;
@@ -56,15 +58,18 @@ class BinaryTree {
                     }
 
                     //Node with two children
-                    //find the node successor
-                    Node * successor = findSuccessor(temp);
-                    std::cout << "Key when returned from function is "<< successor->key << '\n';
-                    //if successor has right child connect it to the father of successor
-                    std::cout << "got here";
-                    transplant(successor->right, successor);
-
-                    transplant(successor, temp);
-                    
+                    if(temp->left != nullptr && temp->right != nullptr) {
+                        //find the node successor
+                        Node * successor = findSuccessor(temp);
+                        //make the right tree of the successor the child of the successor father
+                        transplant(successor->right, successor);
+                        //make the successor the child of the temp father
+                        transplant(successor, temp);
+                        //give the successor the connections of the deleted element
+                        successor->left = temp->left;
+                        successor->right = temp->right;
+                        return;
+                    }
                 }
                 if (data > temp->key) {
                     temp = temp->right;
@@ -180,11 +185,8 @@ int main() {
     bt->addElement(50);
     bt->addElement(25);
     bt->addElement(250);
-    //int & a = bt->findElement(0);
-    //a = 60;
-    //std::cout << a << '\n';
-    bt->deleteElement(200);
-    bt->apply(&print);
-    //bt->printTree();
+    bt->deleteElement(100);
+    //bt->apply(&print);
+    bt->printTree();
     return 0;
 }
