@@ -18,6 +18,18 @@ class BinaryTree {
         BinaryTree() {
             root = nullptr;
         }
+        void transplant(Node * target, Node * origin) {
+            if(origin->father == nullptr) { 
+                root = target;
+            }
+            else if(origin->father->left != nullptr) {
+                if(origin->father->left->key == origin->key) origin->father->left = target;
+            }
+            else {
+                origin->father->right = target;
+            }
+            target->father = origin->father;
+        }
         void deleteElement(T data) {
             Node * temp = root;
             while(temp != nullptr) {
@@ -48,36 +60,11 @@ class BinaryTree {
                     Node * successor = findSuccessor(temp);
                     std::cout << "Key when returned from function is "<< successor->key << '\n';
                     //if successor has right child connect it to the father of successor
+                    std::cout << "got here";
+                    transplant(successor->right, successor);
+
+                    transplant(successor, temp);
                     
-                    if(successor->right != nullptr) {
-                        //std::cout << "right hand key is " << successor->right->key << '\n';
-                        //std::cout << "successor key is "<< successor->key << '\n';
-                        successor->right->father = successor->father;
-                        if(successor->father->left != nullptr) {
-                            if(successor->father->left->key == successor->key) {
-                                successor->father->left = successor->right;
-                            }
-                        } else {
-                            successor->father->right = successor->right;
-                            }                            
-                    } else {
-                        if(successor->father->left != nullptr) {
-                            if(successor->father->left->key == successor->key) {
-                                successor->father->left = nullptr;
-                            }
-                        } else {
-                            successor->father->right = nullptr;
-                            std::cout << "got here ";
-                            }                            
-                        }
-                    //swap the successor to the node place
-                    successor->father = temp->father;
-                    if(temp->father->key > temp->key) {
-                        temp->father->left = successor;
-                    } else {
-                        temp->father->right = successor;
-                    }
-                    return;
                 }
                 if (data > temp->key) {
                     temp = temp->right;
