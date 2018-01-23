@@ -103,6 +103,7 @@ class Heap {
         T temp = list[0];
         list[0] = list[heapSize - 1];
         heapSize = heapSize - 1;
+        list.pop_back();
         maxHeapify(0);
         return temp;
       }
@@ -126,6 +127,7 @@ class Heap {
         T temp = list[0];
         list[0] = list[heapSize - 1];
         heapSize = heapSize - 1;
+        list.pop_back();
         minHeapify(0);
         return temp;
       }
@@ -153,25 +155,21 @@ int main () {
   list.push_back(8);
   //std::cout << list.size();
   Heap<int> h;
-  h.buildMaxHeap(list);
+  h.MaxHeapInsert(2);
+  h.MaxHeapInsert(4);
+  h.MaxHeapInsert(6);
+  h.MaxHeapInsert(9);
+  h.MaxHeapInsert(10);
+  h.MaxHeapInsert(19);
+  h.MaxHeapInsert(25);
+  h.MaxHeapInsert(35);
   h.MaxHeapInsert(20);
+  h.heapExtractMax();
   h.printHeap();
-  int extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  extractedMax = h.heapExtractMax();
-  std::cout  << '\n';
-  std::cout << "extracted max is " << extractedMax << '\n';
 
-  h.buildMinHeap(list);
-  h.MinHeapInsert(1);
-  h.printHeap();
+  //h.MinHeapInsert(1);
+  //h.printHeap();
+  /*
   int extractedMin;
   extractedMin = h.heapExtractMin();
   extractedMin = h.heapExtractMin();
@@ -179,6 +177,7 @@ int main () {
   extractedMin = h.heapExtractMin();
   std::cout  << '\n';
   std::cout << "extracted min is " << extractedMin << '\n';
+  */
 
   return 0;
 }
