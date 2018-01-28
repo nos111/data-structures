@@ -202,7 +202,26 @@ class AVLTree {
     }
   }
   void rotateRight(Node * rotateMe) {
-    
+    Node * temp = rotateMe->left;
+    //move the right tree of the child to be the left tree of parent
+    rotateMe->left = temp->right;
+    //change the fathers
+    temp->father = rotateMe->father;
+    //rotate the nodes
+    rotateMe->father = temp;
+    temp->right = rotateMe;
+    //check to which side the father belong
+    std::cout << "rotate me father right key is " << rotateMe->father->left->key;
+    if(temp->father->left != nullptr) {
+      if(temp->father->left->key == rotateMe->key) {
+        std::cout << "rotate me key is " << rotateMe->key;
+        temp->father->left = temp;
+      } else {
+        temp->father->right = temp;
+      }
+    } else {
+      temp->father->right = temp;
+    }
   }
   BinaryTree bt;
 
@@ -223,6 +242,9 @@ class AVLTree {
     bt.inorderTreeWalk(bt.root);
     rotateLeft(bt.root->right);
     std::cout << "Node 200 was rotated \n";
+    bt.inorderTreeWalk(bt.root);
+    rotateRight(bt.root->right);
+    std::cout << "Node 300 was rotated \n";
     bt.inorderTreeWalk(bt.root);
   }
 };
