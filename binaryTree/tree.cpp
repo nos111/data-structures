@@ -132,13 +132,15 @@ class BinaryTree {
             return element;
         }
         Node * findSuccessor(Node * element) {
+            if(element == nullptr) return nullptr;
             if(element->right != nullptr) {
                 return treeMinimum(element->right);
             }
             Node * temp = element->father;
-            while(temp != nullptr && element == temp->right ) {
+            while(temp != nullptr && element->key == temp->right->key ) {
                 element = temp;
                 temp = temp->father;
+                if(temp->right == nullptr) return temp;
             }
             return temp;
         }
@@ -147,7 +149,7 @@ class BinaryTree {
                 return treeMaximum(element->left);
             }
             Node * temp = element->parent;
-            while(temp != nullptr && element == temp->left ) {
+            while(temp != nullptr && element->key == temp->left->key ) {
                 element = temp;
                 temp = temp->father;
             }
@@ -185,6 +187,6 @@ int main() {
     bt->addElement(250);
     bt->deleteElement(100);
     //bt->apply(&print);
-    bt->printTree();
+    //bt->printTree();
     return 0;
 }
