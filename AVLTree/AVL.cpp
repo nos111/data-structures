@@ -2,21 +2,21 @@
 
 template <typename T>
 class AVLTree {
-  struct BinaryTree {
-    struct Node {
-      Node() {
-          left, right, father = nullptr;
-          leftWeight, rightWeight = 0;
-      }
-      Node * left;
-      Node * right;
-      Node * father;
-      T key;
-      int leftWeight;
-      int rightWeight;
-      ~Node(){
-      };
+  struct Node {
+    Node() {
+        left, right, father = nullptr;
+        leftWeight, rightWeight = 0;
+    }
+    Node * left;
+    Node * right;
+    Node * father;
+    T key;
+    int leftWeight;
+    int rightWeight;
+    ~Node(){
     };
+  };
+  struct BinaryTree {
     Node * root;
       BinaryTree() {
           root = nullptr;
@@ -160,9 +160,11 @@ class AVLTree {
     }
     void inorderTreeWalk(Node * x) {
         if(x != nullptr) {
+            std::cout << x->key << "My left is ";
             inorderTreeWalk(x->left);
-            std::cout << x->key << "\n";
+            std::cout << "My right is ";
             inorderTreeWalk(x->right);
+            std::cout << "\n";
         }
     }
     void apply(void (*foo) (T)) {
@@ -171,9 +173,58 @@ class AVLTree {
     void printTree() {
         inorderTreeWalk(root);
     }
-};
+  };
 
+  void fixInsert(Node * fixMe) {
 
+  }
+
+  void rotateLeft(Node * rotateMe) {
+    Node * temp = rotateMe->right;
+    //move the right tree of the child to be the left tree of parent
+    rotateMe->right = temp->left;
+    //change the fathers
+    temp->father = rotateMe->father;
+    //rotate the nodes
+    rotateMe->father = temp;
+    temp->left = rotateMe;
+    //check to which side the father belong
+    std::cout << "rotate me father right key is " << rotateMe->father->right->key;
+    if(temp->father->right != nullptr) {
+      if(temp->father->right->key == rotateMe->key) {
+        std::cout << "rotate me key is " << rotateMe->key;
+        temp->father->right = temp;
+      } else {
+        temp->father->left = temp;
+      }
+    } else {
+      temp->father->left = temp;
+    }
+  }
+  void rotateRight(Node * rotateMe) {
+    
+  }
+  BinaryTree bt;
+
+  public:
+  AVLTree() {
+  }
+
+  void insert(T key) {
+    bt.addElement(key);
+  }
+  void deleteKey(T key) {
+
+  }
+  T findKey(T key) {
+    return findElement(key);
+  }
+  void test() {
+    bt.inorderTreeWalk(bt.root);
+    rotateLeft(bt.root->right);
+    std::cout << "Node 200 was rotated \n";
+    bt.inorderTreeWalk(bt.root);
+  }
 };
 
 void print(int i) {
@@ -181,18 +232,17 @@ void print(int i) {
 }
 
 int main() {
-    BinaryTree<int> * bt = new BinaryTree<int>();
-    bt->addElement(100);
-    bt->addElement(100);
-    bt->addElement(200);
-    bt->addElement(180);
-    bt->addElement(300);
-    bt->addElement(400);
-    bt->addElement(50);
-    bt->addElement(25);
-    bt->addElement(250);
-    bt->deleteElement(100);
-    //bt->apply(&print);
-    //bt->printTree();
-    return 0;
+  AVLTree<int> * Atree = new AVLTree<int>();
+  Atree->insert(100);
+  Atree->insert(100);
+  Atree->insert(200);
+  Atree->insert(180);
+  Atree->insert(300);
+  Atree->insert(400);
+  Atree->insert(50);
+  Atree->insert(25);
+  Atree->insert(250);
+  Atree->test();
+
+  return 0;
 }
