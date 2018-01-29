@@ -68,6 +68,12 @@ class BinaryTree {
                         //give the successor the connections of the deleted element
                         successor->left = temp->left;
                         successor->right = temp->right;
+                        if(successor->left != nullptr) {
+                            successor->left->father = successor;
+                        }
+                        if(successor->right != nullptr) {
+                            successor->right->father = successor;
+                        }
                         return;
                     }
                 }
