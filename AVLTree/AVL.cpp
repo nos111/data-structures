@@ -28,40 +28,44 @@ class AVLTree {
             else {
             origin->father->right = target;
             }
+        } else {
+            origin->father->right = target;
         }
         if(target != nullptr) {
             target->father = origin->father;
         } 
     }
-    void deleteElement(T data) {
+    Node * deleteElement(T data) {
         Node * temp = root;
         while(temp != nullptr) {
             if(temp->key == data) {
-                //Node with no childs
+                //Node with no children
                 if(temp->left == nullptr && temp->right == nullptr) {
                     //find wether it was the left or right child
                     if(temp->father->left != nullptr) {
                         if(temp->father->left->key == temp->key) temp->father->left = nullptr;
                         else  { temp->father->right = nullptr; }
                     } else { temp->father->right = nullptr; }
-                    return;
+                    return temp->father;
                 }
                 //Node with one child
                 if(temp->left == nullptr && temp->right != nullptr) {
                     temp->right->father = temp->father;
                     temp->father->right = temp->right;
-                    return;
+                    return temp->father;
                 }
                 if(temp->left != nullptr && temp->right == nullptr) {
                     temp->left->father = temp->father;
                     temp->father->left = temp->left;
-                    return;
+                    return temp->father;
                 }
 
                 //Node with two children
                 if(temp->left != nullptr && temp->right != nullptr) {
                     //find the node successor
                     Node * successor = findSuccessor(temp);
+                    std::cout << "My successor is " << successor->key;
+                    Node * parentSuccessor = successor->father;
                     //make the right tree of the successor the child of the successor father
                     transplant(successor->right, successor);
                     //make the successor the child of the temp father
@@ -69,7 +73,13 @@ class AVLTree {
                     //give the successor the connections of the deleted element
                     successor->left = temp->left;
                     successor->right = temp->right;
-                    return;
+                    if(successor->left != nullptr) {
+                      successor->left->father = successor;
+                    }
+                    if(successor->right != nullptr) {
+                      successor->right->father = successor;
+                    }
+                    return successor;
                 }
             }
             if (data > temp->key) {
@@ -177,7 +187,6 @@ class AVLTree {
   };
 
   void reBalance(Node * fixMe) {
-    if(fixMe->key == bt.root->key) return;
     while(fixMe != nullptr) {
       updateHeight(fixMe);
       if(findHeight(fixMe->left) >= findHeight(fixMe->right) + 2) {
@@ -276,7 +285,8 @@ class AVLTree {
     reBalance(newNode);
   }
   void deleteKey(T key) {
-
+    Node * deletedNodeParent = bt.deleteElement(key);
+    reBalance(deletedNodeParent);
   }
   T & findKey(T key) {
     Node * temp = findElement(key);
@@ -302,6 +312,7 @@ int main() {
   Atree->insert(50);
   Atree->insert(25);
   Atree->insert(250);
+  Atree->deleteKey(300);
   Atree->test();
 
   return 0;
