@@ -5,14 +5,12 @@ class AVLTree {
   struct Node {
     Node() {
         left, right, father = nullptr;
-        leftWeight, rightWeight = 0;
     }
     Node * left;
     Node * right;
     Node * father;
     T key;
-    int leftWeight;
-    int rightWeight;
+    int height;
     ~Node(){
     };
   };
@@ -82,10 +80,10 @@ class AVLTree {
         }
 
     }
-    T & findElement(T data) {
+    Node * findElement(T data) {
         Node * temp = root;
         while(temp != nullptr) {
-            if(temp->key == data) return temp->key;
+            if(temp->key == data) return temp;
             if (data > temp->key) {
                 temp = temp->right;
             } else {
@@ -94,12 +92,12 @@ class AVLTree {
         }
         std::cerr << "Element not found \n";
     }
-    void addElement (T data) {
+    Node * addElement (T data) {
         Node * newNode = new Node();
         newNode->key = data;
         if (root == nullptr) {
             root = newNode;
-            return;
+            return root;
         }
         Node * temp = root;
         while(newNode->father == nullptr) {
@@ -108,6 +106,7 @@ class AVLTree {
                 if(temp->left == nullptr) {
                     temp->left = newNode;
                     newNode->father = temp;
+                    return newNode;
                 } else {
                     temp = temp->left;
                 }
@@ -116,11 +115,13 @@ class AVLTree {
                 if(temp->right == nullptr) {
                     temp->right = newNode;
                     newNode->father = temp;
+                    return newNode;
                 } else {
                     temp = temp->right;
                 }
             }
         }
+        return newNode;
     }
     Node * treeMaximum(Node * element) {
         while(element->right != nullptr) {
@@ -175,8 +176,27 @@ class AVLTree {
     }
   };
 
-  void fixInsert(Node * fixMe) {
-
+  void reBalance(Node * fixMe) {
+    if(fixMe->key == bt.root->key) return;
+    while(fixMe != nullptr) {
+      updateHeight(fixMe);
+      if(findHeight(fixMe->left) >= findHeight(fixMe->right) + 2) {
+        if(findHeight(fixMe->left->left) >= findHeight(fixMe->left->right)) {
+          rotateRight(fixMe);
+        } else {
+          rotateLeft(fixMe->left);
+          rotateRight(fixMe);
+        }
+      } else if(findHeight(fixMe->right) >= findHeight(fixMe->left) + 2) {
+        if(findHeight(fixMe->right->right) >= findHeight(fixMe->right->left)) {
+          rotateLeft(fixMe);
+        } else {
+          rotateRight(fixMe->right);
+          rotateLeft(fixMe);
+        }
+      }
+      fixMe = fixMe->father;
+    }
   }
 
   void rotateLeft(Node * rotateMe) {
@@ -189,39 +209,61 @@ class AVLTree {
     rotateMe->father = temp;
     temp->left = rotateMe;
     //check to which side the father belong
-    std::cout << "rotate me father right key is " << rotateMe->father->right->key;
-    if(temp->father->right != nullptr) {
-      if(temp->father->right->key == rotateMe->key) {
-        std::cout << "rotate me key is " << rotateMe->key;
-        temp->father->right = temp;
+    if(temp->father == nullptr) {
+      bt.root = temp;
+    } else {
+      if(temp->father->right != nullptr) {
+        if(temp->father->right->key == rotateMe->key) {
+          temp->father->right = temp;
+        } else {
+          temp->father->left = temp;
+        }
       } else {
         temp->father->left = temp;
       }
-    } else {
-      temp->father->left = temp;
     }
+    updateHeight(temp);
+    updateHeight(rotateMe);
   }
   void rotateRight(Node * rotateMe) {
     Node * temp = rotateMe->left;
+    if(temp == nullptr) return;
     //move the right tree of the child to be the left tree of parent
     rotateMe->left = temp->right;
+    if(rotateMe->left != nullptr) {
+      rotateMe->left->father = rotateMe;
+    }
     //change the fathers
     temp->father = rotateMe->father;
     //rotate the nodes
     rotateMe->father = temp;
     temp->right = rotateMe;
     //check to which side the father belong
-    std::cout << "rotate me father right key is " << rotateMe->father->left->key;
-    if(temp->father->left != nullptr) {
-      if(temp->father->left->key == rotateMe->key) {
-        std::cout << "rotate me key is " << rotateMe->key;
-        temp->father->left = temp;
+    if(temp->father == nullptr) {
+      bt.root = temp;
+    } else {
+      if(temp->father->left != nullptr) {
+        if(temp->father->left->key == rotateMe->key) {
+          temp->father->left = temp;
+        } else {
+          temp->father->right = temp;
+        }
       } else {
         temp->father->right = temp;
       }
-    } else {
-      temp->father->right = temp;
     }
+    
+    updateHeight(temp);
+    updateHeight(rotateMe);
+  }
+
+  int findHeight(Node * myHeight) {
+    if (myHeight == nullptr) return -1;
+    return myHeight->height;
+  }
+
+  void updateHeight(Node * updateMe) {
+    updateMe->height = std::max(findHeight(updateMe->left), findHeight(updateMe->right)) + 1;
   }
   BinaryTree bt;
 
@@ -230,21 +272,18 @@ class AVLTree {
   }
 
   void insert(T key) {
-    bt.addElement(key);
+    Node * newNode = bt.addElement(key);
+    reBalance(newNode);
   }
   void deleteKey(T key) {
 
   }
-  T findKey(T key) {
-    return findElement(key);
+  T & findKey(T key) {
+    Node * temp = findElement(key);
+    if(temp != nullptr) return temp->key;
+    std::cout << " element not found";
   }
   void test() {
-    bt.inorderTreeWalk(bt.root);
-    rotateLeft(bt.root->right);
-    std::cout << "Node 200 was rotated \n";
-    bt.inorderTreeWalk(bt.root);
-    rotateRight(bt.root->right);
-    std::cout << "Node 300 was rotated \n";
     bt.inorderTreeWalk(bt.root);
   }
 };
@@ -255,7 +294,6 @@ void print(int i) {
 
 int main() {
   AVLTree<int> * Atree = new AVLTree<int>();
-  Atree->insert(100);
   Atree->insert(100);
   Atree->insert(200);
   Atree->insert(180);
