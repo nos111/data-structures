@@ -51,6 +51,7 @@ bool circularList<T>::removeNode(T data) {
   if(temp->next != temp) {
     temp->next->prev = temp->prev;
     temp->prev->next = temp->next;
+    if(temp == tail) tail = temp->next;
     free(temp);
   } else {
     free(tail);
