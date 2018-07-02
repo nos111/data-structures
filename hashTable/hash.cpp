@@ -1,4 +1,5 @@
 #include <iostream>
+#include "hash.hpp"
 
 struct Element {
   int key;
@@ -24,42 +25,31 @@ struct Slot {
   }
 };
 
-class Table {
-  struct Slot * tableContent;
-  int tableSize;
-  int hash(int key, int trial);
-  public:
-    void insert(int key, int data);
-    void deleteElement(int key);
-    int find(int key);
-    Table() {
-      tableContent = new Slot [1024];
-      tableSize = 1024;
-    }
-    Table(int size) {
-      tableContent = new Slot [size];
-      tableSize = size;
-    }
-    ~Table() {
-      /*
-      for(int i = 0; i < tableSize; i++) {
-        struct Slot temp = tableContent[i];
-        delete(temp.element);
-      }*/
-      delete [] tableContent;
-    }
-};
+
+Table::Table() {
+  tableContent = new Slot [1024];
+  tableSize = 1024;
+}
+
+Table::Table(int size) {
+  tableContent = new Slot [size];
+  tableSize = size;
+}
+
+Table::~Table() {
+  delete [] tableContent;
+}
 
 void Table::insert(int key, int data) {
-  int trial = 1;
+  int trial = 0;
   int index = hash(key, trial);
-  std::cout << "the new index is " << index << " \n";
   struct Slot * temp = &tableContent[index];
-  std::cout << "the slot bool is  " << temp->empty << " \n";
+  //std::cout << "the slot bool is  " << temp->empty << " \n";
   while(!temp->empty) {
     trial += 1;
     index = hash(key, trial);
-    std::cout << "the new index is " << index << " \n";
+    //std::cout << "the key  is " << key << " \n";
+    //std::cout << "the new index is " << index << " \n";
     temp = &tableContent[index];
   }
   temp->element->key = key;
@@ -69,10 +59,13 @@ void Table::insert(int key, int data) {
 }
 
 void Table::deleteElement(int key) {
-  int trial = 1;
+  int trial = 0;
   int index = hash(key, trial);
+  std::cout << "the key  is " << key << " \n";
+  std::cout << "the index is " << index << " \n";
   struct Slot * temp = &tableContent[index];
   while(temp->empty == false || temp->deleted == true) {
+    std::cout << " LOOPING \n";
     if(temp->element->key == key) {
       delete temp->element;
       temp->element = new Element();
@@ -86,7 +79,7 @@ void Table::deleteElement(int key) {
 }
 
 int Table::find(int key) {
-  int trial = 1;
+  int trial = 0;
   int index = hash(key, trial);
   struct Slot * slot = &tableContent[index];
   while(slot->empty == false || slot->deleted == true) {
@@ -96,31 +89,21 @@ int Table::find(int key) {
     if(slot->element->key == key) return slot->element->data;
     trial += 1;
     index = hash(key, trial);
+    if(index > tableSize || index < 0) {
+      std::cout << "index error in finding \n";
+      return 0;
+    }
     slot = &tableContent[index];
+    if(trial == 15 ) throw ("too many trials");
   }
   return 0;
 }
 
 //double hashing to avoid clustering
 int Table::hash(int key, int trial) {
-  int hash1 = ((3 * key + 4) % 17) % tableSize;
-  int hash2 = ((11 * key + 19) % 17) % tableSize;
+  int hash1 = key % tableSize;
+  int hash2 = 1 + (key % (tableSize - 1));
   hash2 = (hash1 + trial * hash2) % tableSize;
-  std::cout << "the new hash is " << hash2 << "\n";
+  //std::cout << "the new hash is " << hash2 << "\n";
   return hash2;
-}
-
-int main() {
-  Table * t = new Table();
-  t->insert(10, 5);
-  t->insert(20, 20);
-  t->insert(20, 20);
-  t->insert(500, 20);
-  std::cout << " the value in key 500 is " << t->find(500) << " \n";
-  t->deleteElement(500);
-  std::cout << " the value in key 500 is " << t->find(500) << " \n";
-  std::cout << " the value in key 10 is " << t->find(10) << " \n";
-  std::cout << " HELLO ME \n";
-  delete t;
-  return 0;
 }
