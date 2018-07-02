@@ -21,9 +21,7 @@ bool checkTableContent(Table * table, int tableSize) {
 
 bool checkDeletion(Table * table, int tableSize) {
   for(int i = 0; i < tableSize; i++) {
-    std::cout << " LOOPING \n";
     table->deleteElement(i);
-    std::cout << " finished deletiong \n";
     int data = table->find(i);
     if(data != 0) {
       std::cerr << "found error on index " << i << " \n";
@@ -33,10 +31,10 @@ bool checkDeletion(Table * table, int tableSize) {
   return true;
 }
 int main() {
-  int tableSize = 128;
+  int tableSize = 10000;
   Table * t = new Table(tableSize * 2);
   fillTable(t, tableSize);
   if(checkTableContent(t, tableSize)) std::cout << "No errors were encountered in filling and finding \n" ;
-  //if(checkDeletion(t, tableSize)) std::cout << "No errors were encountered in deletion \n" ;
+  if(checkDeletion(t, tableSize)) std::cout << "No errors were encountered in deletion \n" ;
   return 0;
 }

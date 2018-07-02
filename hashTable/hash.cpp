@@ -61,11 +61,11 @@ void Table::insert(int key, int data) {
 void Table::deleteElement(int key) {
   int trial = 0;
   int index = hash(key, trial);
-  std::cout << "the key  is " << key << " \n";
-  std::cout << "the index is " << index << " \n";
+  //std::cout << "the key  is " << key << " \n";
+  //std::cout << "the index is " << index << " \n";
   struct Slot * temp = &tableContent[index];
   while(temp->empty == false || temp->deleted == true) {
-    std::cout << " LOOPING \n";
+    //std::cout << " LOOPING \n";
     if(temp->element->key == key) {
       delete temp->element;
       temp->element = new Element();
@@ -83,9 +83,9 @@ int Table::find(int key) {
   int index = hash(key, trial);
   struct Slot * slot = &tableContent[index];
   while(slot->empty == false || slot->deleted == true) {
-    std::cout << "the slot empty is  " << slot->empty << " \n";
-    std::cout << "the slot deleted is  " << slot->deleted << " \n";
-    std::cout << "the slot key is  " << slot->element->key << " \n";
+    //std::cout << "the slot empty is  " << slot->empty << " \n";
+    //std::cout << "the slot deleted is  " << slot->deleted << " \n";
+    //std::cout << "the slot key is  " << slot->element->key << " \n";
     if(slot->element->key == key) return slot->element->data;
     trial += 1;
     index = hash(key, trial);
@@ -94,7 +94,7 @@ int Table::find(int key) {
       return 0;
     }
     slot = &tableContent[index];
-    if(trial == 15 ) throw ("too many trials");
+    //if(trial == 15 ) throw ("too many trials");
   }
   return 0;
 }
